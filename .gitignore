@@ -1,0 +1,17 @@
+logs/*
+backups/*
+test-data/*
+!logs/.gitkeep
+!backups/.gitkeep
+!test-data/.gitkeep
+
+# The ! means "don't ignore this" - it's an exception to the previous ignore rule.
+# .gitkeep is a convention (not a Git feature). It's an empty file used to:
+# REMEMBER TO CREATE THESE .gitkeep files yourself!!!
+
+# Keep otherwise empty directories in Git
+# Git normally doesn't track empty directories
+# By having this file, the directory structure is preserved when someone clones the repository
+
+# Ignore .DS_Store files
+.DS_Store
