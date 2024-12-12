@@ -4,9 +4,10 @@
 SOURCE_DIR="./test-data"
 BACKUP_DIR="./backups"
 
-# Create timestamp for backup folder name
+# Create timestamp for backup file name
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-BACKUP_PATH="${BACKUP_DIR}/backup_${TIMESTAMP}"
+BACKUP_NAME="backup_${TIMESTAMP}.tar.gz"
+BACKUP_PATH="${BACKUP_DIR}/${BACKUP_NAME}"
 
 # Create backup directory if it doesn't exist
 mkdir -p "$BACKUP_DIR"
@@ -20,9 +21,16 @@ log_message() {
 # Start backup
 log_message "Starting backup..."
 
-# Create backup with timestamp
-if cp -r "$SOURCE_DIR" "$BACKUP_PATH"; then
+# Calculate original size
+ORIGINAL_SIZE=$(du -sh "$SOURCE_DIR" | cut -f1)
+
+# Create compressed backup
+if tar -czf "$BACKUP_PATH" -C "$SOURCE_DIR" .; then
+    # Calculate compressed size
+    COMPRESSED_SIZE=$(du -sh "$BACKUP_PATH" | cut -f1)
     log_message "Backup created successfully at $BACKUP_PATH"
+    log_message "Original size: $ORIGINAL_SIZE"
+    log_message "Compressed size: $COMPRESSED_SIZE"
 else
     log_message "Error: Backup failed"
     exit 1
