@@ -115,4 +115,33 @@ log_message "Backup process completed."
 
 
 # Stuff to work on later:
+
+# Add error handling and validation:
+# - Check disk space before backup
+# - Verify backup integrity after creation
+# - Add backup status notifications
+
+
+# Add more configuration options:
+# - Exclude specific files/directories
+# - Different compression levels
+# - Custom backup naming patterns
+# - Different backup rotation strategies
+
+
+# Add a dry-run mode:
+# - Show what would be backed up
+# - Show size estimates
+# - Show which files changed
+
+
+# Add backup reporting:
+# - Generate summary reports
+# - Track backup history
+# - Show space usage trends
+
+
 # Creating a restore script
+# - List available backups
+# - Restore from a specific backup
+# - Preview what files are in a backup before restoring
