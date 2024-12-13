@@ -17,18 +17,37 @@ if [ -z "$SOURCE_DIR" ] || [ -z "$BACKUP_DIR" ] || [ -z "$MAX_BACKUPS" ]; then
     exit 1
 fi
 
-# Create timestamp for backup file name
-TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-BACKUP_NAME="backup_${TIMESTAMP}.tar.gz"
-BACKUP_PATH="${BACKUP_DIR}/${BACKUP_NAME}"
-
-# Create backup directory if it doesn't exist
+# Create directories if they don't exist
 mkdir -p "$BACKUP_DIR"
+mkdir -p "./checksums"
 
 # Function to log messages
 log_message() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" >> "./logs/backup.log"
     echo "$1"
+}
+
+# Function to generate checksums for all files
+generate_checksums() {
+    find "$SOURCE_DIR" -type f -exec md5sum {} \; | sort > "./checksums/current_checksums.txt"
+}
+
+# Function to check if files have changed
+files_have_changed() {
+    generate_checksums
+
+    if [ ! -f "./checksums/last_backup_checksums.txt" ]; then
+        log_message "No previous checksum file found. First backup needed."
+        return 0
+    fi
+
+    if ! diff "./checksums/last_backup_checksums.txt" "./checksums/current_checksums.txt" >/dev/null; then
+        log_message "Changes detected in source files."
+        return 0
+    else
+        log_message "No changes detected since last backup."
+        return 1
+    fi
 }
 
 # Function to cleanup old backups
@@ -56,33 +75,44 @@ cleanup_old_backups() {
 log_message "Starting backup..."
 log_message "Using source directory: $SOURCE_DIR"
 log_message "Using backup directory: $BACKUP_DIR"
+log_message "Checking for changes in $SOURCE_DIR"
 
-# Calculate original size
-ORIGINAL_SIZE=$(du -sh "$SOURCE_DIR" | cut -f1)
+# Only proceed with backup if files have changed
+if files_have_changed; then
 
-# Create compressed backup
-if tar -czf "$BACKUP_PATH" -C "$SOURCE_DIR" .; then
-    # Calculate compressed size
-    COMPRESSED_SIZE=$(du -sh "$BACKUP_PATH" | cut -f1)
-    log_message "Backup created successfully at $BACKUP_PATH"
-    log_message "Original size: $ORIGINAL_SIZE"
-    log_message "Compressed size: $COMPRESSED_SIZE"
+    # Create timestamp for backup file name
+    TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+    BACKUP_NAME="backup_${TIMESTAMP}.tar.gz"
+    BACKUP_PATH="${BACKUP_DIR}/${BACKUP_NAME}"
 
-    # Clean up old backups
-    cleanup_old_backups
+    # Calculate original size
+    ORIGINAL_SIZE=$(du -sh "$SOURCE_DIR" | cut -f1)
+    FILE_COUNT=$(find "$SOURCE_DIR" -type f | wc -l)
+    
+    # Create compressed backup
+    if tar -czf "$BACKUP_PATH" -C "$SOURCE_DIR" .; then
+        # Calculate compressed size
+        COMPRESSED_SIZE=$(du -sh "$BACKUP_PATH" | cut -f1)
+        log_message "Backup created successfully at $BACKUP_PATH"
+        log_message "Original size: $ORIGINAL_SIZE"
+        log_message "Compressed size: $COMPRESSED_SIZE"
+        log_message "Files backed up: $FILE_COUNT"
+
+        # Save the current checksums (that was just done) as last backup checksums
+        cp "./checksums/current_checksums.txt" "./checksums/last_backup_checksums.txt"
+
+        # Clean up old backups
+        cleanup_old_backups
+    else
+        log_message "Error: Backup failed"
+        exit 1
+    fi
 else
-    log_message "Error: Backup failed"
-    exit 1
+    log_message "No backup needed - files unchanged since last backup."
 fi
-
-# Count files backed up
-FILE_COUNT=$(find "$BACKUP_PATH" -type f | wc -l)
-log_message "Files backed up: $FILE_COUNT"
 
 log_message "Backup process completed."
 
 
-
 # Stuff to work on later:
-# Adding change detection (only backup if files changed)
 # Creating a restore script

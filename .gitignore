@@ -5,6 +5,9 @@ test-data/*
 !backups/.gitkeep
 !test-data/.gitkeep
 
+checksums/*
+!checksums/.gitkeep
+
 # The ! means "don't ignore this" - it's an exception to the previous ignore rule.
 # .gitkeep is a convention (not a Git feature). It's an empty file used to:
 # REMEMBER TO CREATE THESE .gitkeep files yourself!!!
