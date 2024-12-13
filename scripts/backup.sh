@@ -1,9 +1,21 @@
 #!/bin/bash
 
-# Configuration
-SOURCE_DIR="./test-data"
-BACKUP_DIR="./backups"
-MAX_BACKUPS=4
+# Load configuration
+CONFIG_FILE="./configs/backup.conf"
+
+if [ ! -f "$CONFIG_FILE" ]; then
+    echo "Error: Configuration file not found at $CONFIG_FILE"
+    exit 1
+fi
+
+# Source the config file
+source "$CONFIG_FILE"
+
+# Verify required variables are set
+if [ -z "$SOURCE_DIR" ] || [ -z "$BACKUP_DIR" ] || [ -z "$MAX_BACKUPS" ]; then
+    echo "Error: Required configuration variables are missing"
+    exit 1
+fi
 
 # Create timestamp for backup file name
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
@@ -40,9 +52,10 @@ cleanup_old_backups() {
     fi
 }
 
-
 # Start backup
 log_message "Starting backup..."
+log_message "Using source directory: $SOURCE_DIR"
+log_message "Using backup directory: $BACKUP_DIR"
 
 # Calculate original size
 ORIGINAL_SIZE=$(du -sh "$SOURCE_DIR" | cut -f1)
@@ -71,6 +84,5 @@ log_message "Backup process completed."
 
 
 # Stuff to work on later:
-# Making paths configurable through a config file
 # Adding change detection (only backup if files changed)
 # Creating a restore script
