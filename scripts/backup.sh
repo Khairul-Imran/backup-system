@@ -113,7 +113,6 @@ cleanup_old_backups() {
     local backup_count=$(ls -1 "${BACKUP_DIR}"/*.tar.gz 2>/dev/null | wc -l)
     
     if [ "$backup_count" -gt "$MAX_BACKUPS" ]; then
-        # log_message "Found $backup_count backups, cleaning up to keep only $MAX_BACKUPS"
         send_notification "warning" "Found $backup_count backups, cleaning up to keep only $MAX_BACKUPS"
         
         # Get list of old backups to remove
@@ -168,10 +167,6 @@ if files_have_changed; then
         # Calculate compressed size
         COMPRESSED_SIZE=$(du -sh "$BACKUP_PATH" | cut -f1)
         send_notification "success" "Backup created successfully at $BACKUP_PATH"
-        # log_message "Backup created successfully at $BACKUP_PATH"
-        # log_message "Original size: $ORIGINAL_SIZE"
-        # log_message "Compressed size: $COMPRESSED_SIZE"
-        # log_message "Files backed up: $FILE_COUNT"
         send_notification "info" "Original size: $ORIGINAL_SIZE, Compressed size: $COMPRESSED_SIZE, Files: $FILE_COUNT"
 
         # Save the current checksums (that was just done) as last backup checksums
@@ -180,26 +175,17 @@ if files_have_changed; then
         # Clean up old backups
         cleanup_old_backups
     else
-        # log_message "Error: Backup failed"
         send_notification "error" "Backup creation failed."
         exit 1
     fi
 else
-    # log_message "No backup needed - files unchanged since last backup."
     send_notification "info" "No backup needed - files unchanged since last backup."
 fi
 
-# log_message "Backup process completed."
 send_notification "success" "Backup process completed."
 
 
 # Stuff to work on later:
-
-# Add error handling and validation:
-# - Check disk space before backup
-# - Verify backup integrity after creation
-# - Add backup status notifications
-
 
 # Add more configuration options:
 # - Exclude specific files/directories
