@@ -18,7 +18,7 @@ check_disk_space() {
         return 1
     fi
 
-    log_message "Sufficient disk space available"
+    log_message "Sufficient disk space available: ${backup_dir_space}"
     return 0
 }
 
@@ -187,6 +187,12 @@ send_notification "success" "Backup process completed."
 
 # Stuff to work on later:
 
+# Creating a restore script
+# - List available backups
+# - Restore from a specific backup
+# - Preview what files are in a backup before restoring
+
+
 # Add more configuration options:
 # - Exclude specific files/directories
 # - Different compression levels
@@ -204,9 +210,3 @@ send_notification "success" "Backup process completed."
 # - Generate summary reports
 # - Track backup history
 # - Show space usage trends
-
-
-# Creating a restore script
-# - List available backups
-# - Restore from a specific backup
-# - Preview what files are in a backup before restoring
