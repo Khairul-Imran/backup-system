@@ -54,7 +54,7 @@ restore_backup() {
     local backup_file="$1"
     local restore_path="$2"
 
-    if [ ! -f "$backup_file" ]: then
+    if [ ! -f "$backup_file" ]; then
         log_message "Error: Backup file not found: $backup_file"
         return 1
     fi
@@ -75,7 +75,7 @@ restore_backup() {
 
 
 # Main menu
-while true: do
+while true; do
     echo
     echo "Backup Restore Utility"
     echo "--------------------"
