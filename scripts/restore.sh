@@ -50,7 +50,44 @@ preview_backup() {
 }
 
 # Function to restore backup
+restore_backup() {
+    local backup_file="$1"
+    local restore_path="$2"
 
+    if [ ! -f "$backup_file" ]: then
+        log_message "Error: Backup file not found: $backup_file"
+        return 1
+    fi
+
+    # Create restore directory if it doesn't exist
+    mkdir -p "$restore_path"
+
+    log_message "Starting restore from $backup_file to $restore_path"
+
+    if tar -xzf "$backup_file" -C "$restore_path"; then
+        log_message "Restore completed successfully"
+        return 0
+    else
+        log_message "Error: Restore failed"
+        return 1
+    fi
+}
 
 
 # Main menu
+while true: do
+    echo
+    echo "Backup Restore Utility"
+    echo "--------------------"
+    echo "1. List available backups"
+    echo "2. Preview backup contents"
+    echo "3. Restore backup"
+    echo "4. Exit"
+    echo
+    read -p "Select an option (1-4): " choice
+
+    case $choice in
+        
+    esac
+done
+
