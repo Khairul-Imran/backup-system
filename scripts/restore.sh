@@ -87,7 +87,45 @@ while true: do
     read -p "Select an option (1-4): " choice
 
     case $choice in
-        
+        1)
+            list_backups
+            ;;
+        2)
+            list_backups
+            echo
+            read -p "Enter backup number to preview: " backup_num
+            backup_file=$(ls -1 "${BACKUP_DIR}"/*.tar.gz | sed -n "${backup_num}p")
+            if [ -n "$backup_file" ]; then
+                preview_backup "$backup_file"
+            else
+                log_message "Error: Invalid backup number"
+            fi
+            ;;
+        3)
+            list_backups
+            echo
+            read -p "Enter backup number to restore: " backup_num
+            read -p "Enter restore path: " restore_path
+            backup_file=$(ls -1 "${BACKUP_DIR}"/*.tar.gz | sed -n "${backup_num}p")
+            if [ -n "$backup_file" ]; then
+                if [ -d "$restore_path" ] && [ "$(ls -A "$restore_path")" ]; then
+                    read -p "Warning: Restore directory is not empty. Continue? (y/n): " confirm
+                    if [ "$confirm" != "y" ]; then
+                        log_message "Restore cancelled by user"
+                        continue
+                    fi
+                fi
+                restore_backup "$backup_file" "$restore_path"
+            else
+                log_message "Error: Invalid backup number"
+            fi
+            ;;
+        4)
+            echo "Exiting..."
+            exit 0
+            ;;
+        *)
+            echo "Invalid option"
+            ;;
     esac
 done
-
