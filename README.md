@@ -47,6 +47,8 @@ Edit `configs/backup.conf` to set:
 
 # Dry run (preview what would be backed up)
 ./scripts/backup.sh --dry-run
+# OR
+./scripts/backup.sh -d
 ```
 
 ### Restore

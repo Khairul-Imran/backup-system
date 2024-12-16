@@ -6,6 +6,8 @@ restored-files/*
 !logs/.gitkeep
 !backups/.gitkeep
 !test-data/.gitkeep
+!reports/.gitkeep
+!restored-files/.gitkeep
 
 checksums/*
 !checksums/.gitkeep
