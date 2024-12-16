@@ -18,16 +18,19 @@ A comprehensive backup system for creating and managing automated backups with f
 
 ```bash
 backup-system/
-├── scripts/
-│   ├── backup.sh
-│   ├── restore.sh
-│   └── report.sh
+├── README.md
+├── backups/
+├── checksums/
 ├── configs/
 │   └── backup.conf
-├── backups/
 ├── logs/
 ├── reports/
-└── checksums/
+├── restored-files/
+├── scripts/
+│   ├── backup.sh
+│   ├── report.sh
+│   └── restore.sh
+└── test-data/
 ```
 
 ## Configuration
