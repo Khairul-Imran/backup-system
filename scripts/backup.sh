@@ -3,7 +3,67 @@
 # Load configuration
 CONFIG_FILE="./configs/backup.conf"
 
-# New parts (14th Dec)
+# Parse command line arguments
+DRY_RUN=false
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        -d | --dry-run)
+            DRY_RUN=true
+            shift
+            ;;
+        *)
+            echo "Unknown parameter: $1"
+            echo "Usage: $0 [-d|--dry-run]"
+            exit 1
+            ;;
+    esac
+done
+
+# Function to show what files would be backed up
+show_backup_preview() {
+    local total_size=0
+    local file_count=0
+    local changed_files=""
+
+    send_notification "info" "DRY RUN - Preview of backup operation"    
+    echo "Files that would be backed up:"
+    echo "------------------------------"
+
+    # Generate current checksums for comparison
+    generate_checksums
+
+    while IFS= read -r file; do
+        local filepath=$(echo "$file" | awk '{print $2}')
+        local size=$(du -h "$filepath" 2>/dev/null | cut -f1)
+        echo "📄 $filepath ($size)"
+        ((file_count++))
+
+        # Check if file is changed or new
+        if [ -f "./checksums/last_backup_checksums.txt" ]; then
+            if ! grep -q "$file" "./checksums/last_backup_checksums.txt"; then
+                changed_files="$changed_files\n➕ New/Changed: $filepath"
+            fi
+        fi
+    done < "./checksums/current_checksums.txt"
+
+    # Calculate total size
+    total_size=$(du -sh "$SOURCE_DIR" | cut -f1)
+
+    echo -e "\nSummary:"
+    echo "---------"
+    echo "Total files to backup: $file_count"
+    echo "Total size: $total_size"
+
+    if [ -n "$changed_files" ]; then
+        echo -e "\nChanged or new files:"
+        echo -e "$changed_files"
+    fi
+
+    # Show disk space information
+    local available_space=$(df -h "$BACKUP_DIR" | awk 'NR==2 {print $4}')
+    echo -e "\nAvailable space in backup directory: $available_space"
+}
+
 
 # Function to check available disk space (in KB)
 check_disk_space() {
@@ -128,6 +188,12 @@ cleanup_old_backups() {
     fi
 }
 
+# To check for dry run
+if [ "$DRY_RUN" = true ]; then
+    show_backup_preview
+    exit 0
+fi
+
 # Start backup
 # log_message "Starting backup..."
 send_notification "info" "Starting backup process..."
@@ -186,12 +252,6 @@ send_notification "success" "Backup process completed."
 
 
 # Stuff to work on later:
-
-# Creating a restore script
-# - List available backups
-# - Restore from a specific backup
-# - Preview what files are in a backup before restoring
-
 
 # Add more configuration options:
 # - Exclude specific files/directories

@@ -1,6 +1,7 @@
 logs/*
 backups/*
 test-data/*
+restored-files/*
 !logs/.gitkeep
 !backups/.gitkeep
 !test-data/.gitkeep
