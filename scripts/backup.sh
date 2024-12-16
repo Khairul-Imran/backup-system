@@ -258,9 +258,3 @@ send_notification "success" "Backup process completed."
 # - Different compression levels
 # - Custom backup naming patterns
 # - Different backup rotation strategies
-
-
-# Add backup reporting:
-# - Generate summary reports
-# - Track backup history
-# - Show space usage trends
