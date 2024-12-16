@@ -260,12 +260,6 @@ send_notification "success" "Backup process completed."
 # - Different backup rotation strategies
 
 
-# Add a dry-run mode:
-# - Show what would be backed up
-# - Show size estimates
-# - Show which files changed
-
-
 # Add backup reporting:
 # - Generate summary reports
 # - Track backup history
