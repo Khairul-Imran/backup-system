@@ -3,6 +3,8 @@ backups/*
 reports/*
 test-data/*
 restored-files/*
+# These are for explanation/notes only, do not commit. Don't need the gitkeep also
+scripts-explained/*
 !logs/.gitkeep
 !backups/.gitkeep
 !test-data/.gitkeep
